@@ -21,12 +21,12 @@ namespace trace {
         Ray() = default;
         Ray(const glm::vec3& _start, const glm::vec3& _direction);
 
-        // The following three functions should probably be moved out of this class
-        [[nodiscard]] Hit       closestSphereHit(const std::vector<Sphere>& spheres) const;
-        [[nodiscard]] Hit       closestPlaneHit(const std::vector<Plane>& planes) const;
-        [[nodiscard]] Hit       closestLightHit(const std::vector<Disc>& discs) const;
-        [[nodiscard]] glm::vec3 sampleColour(const Scene& scene, size_t depth) const;
+        // The following three functions should probably be moved out of this struct
+        [[nodiscard]] Hit closestSphereHit(const std::vector<Sphere>& spheres) const;
+        [[nodiscard]] Hit closestPlaneHit(const std::vector<Plane>& planes) const;
+        [[nodiscard]] Hit closestLightHit(const std::vector<Disc>& discs) const;
 
+        [[nodiscard]] glm::vec3        sampleColour(const Scene& scene, size_t depth) const;
         [[nodiscard]] static glm::vec3 colourFromHit(const Hit& hit, const Scene& scene, size_t depth);
         [[nodiscard]] static glm::vec3 refractedColourFromHit(const Hit& hit, const Scene& scene, size_t depth);
         [[nodiscard]] static Ray       rayFromPixel(float x, float y);

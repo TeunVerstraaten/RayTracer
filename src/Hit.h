@@ -14,13 +14,13 @@ namespace trace {
 
     struct Hit {
 
-        size_t    identifier = std::numeric_limits<size_t>::max();
-        float     distance   = std::numeric_limits<float>::max();
+        size_t      identifier = std::numeric_limits<size_t>::max();
+        float       distance   = std::numeric_limits<float>::max();
         OBJECT_TYPE type;
-        Material  material;
-        glm::vec3 intersectionPoint;
-        glm::vec3 outwardNormal;
-        glm::vec3 inwardDirection;
+        Material    material;
+        glm::vec3   intersection;
+        glm::vec3   outNormal;
+        glm::vec3   inwardDirection;
 
         bool operator<(const Hit& other) const;
     };

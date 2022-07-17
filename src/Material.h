@@ -25,8 +25,8 @@ namespace trace {
                  const glm::vec3& _ambientColor);
 
         float     ambientFactor;
-        float     diffuseFactor;
-        float     diffuseExponent;
+        float     diffuse;
+        float     diffuseExp;
         float     reflectionCoefficient;
         float     refractionCoefficient;
         float     fuzz;

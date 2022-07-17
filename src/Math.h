@@ -14,7 +14,7 @@ namespace trace {
         float     random_double();
         float     random_double(float _min, float _max);
         glm::vec3 randomVec3(float _min, float _max);
-        glm::vec3 randomOnUnitSphere();
+        glm::vec3 randomDirection();
     } // namespace math
 
 } // namespace trace

@@ -117,29 +117,29 @@ namespace trace {
         if (hit.type == OBJECT_TYPE::LIGHT)
             return hit.material.color;
 
-        const auto& material        = hit.material;
-        glm::vec3   resultantColour = {0, 0, 0};
+        const auto material        = hit.material;
+        glm::vec3  resultantColour = {0, 0, 0};
 
         // Ambient
         if (hit.type == OBJECT_TYPE::SPHERE)
             resultantColour +=
                 material.ambientFactor *
-                (0.8f * material.color + 255.0f * 0.1f * (glm::normalize(hit.outwardNormal) + glm::vec3{1.0, 1.0, 1.0}));
+                (0.8f * material.color + 255.0f * 0.1f * (glm::normalize(hit.outNormal) + glm::vec3{1.0, 1.0, 1.0}));
         else
             resultantColour += material.ambientFactor * material.color;
 
         // Diffuse
-        if (material.diffuseFactor >= 0.001)
-            resultantColour +=
-                material.diffuseFactor *
-                Ray{hit.intersectionPoint, material.diffuseExponent * hit.outwardNormal + math::randomOnUnitSphere()}
-                    .sampleColour(scene, depth - 1);
+        if (material.diffuse >= 0.001) {
+            const auto start = hit.intersection;
+            const auto dir   = material.diffuseExp * hit.outNormal + math::randomDirection();
+            resultantColour += material.diffuse * Ray{start, dir}.sampleColour(scene, depth - 1);
+        }
 
         // Reflection
-        const auto reflectedDirection =
-            hit.inwardDirection - 2.f * glm::dot(hit.inwardDirection, hit.outwardNormal) * hit.outwardNormal;
         if (material.reflectionCoefficient >= 0.001) {
-            const auto reflectedRay = Ray{hit.intersectionPoint, reflectedDirection + material.fuzz * math::randomOnUnitSphere()};
+            const auto reflectedDirection =
+                hit.inwardDirection - 2.f * glm::dot(hit.inwardDirection, hit.outNormal) * hit.outNormal;
+            const auto reflectedRay = Ray{hit.intersection, reflectedDirection + material.fuzz * math::randomDirection()};
             resultantColour += material.reflectionCoefficient * reflectedRay.sampleColour(scene, depth - 1);
         }
 
@@ -166,17 +166,15 @@ namespace trace {
     }
 
     glm::vec3 Ray::refractedColourFromHit(const Hit& hit, const Scene& scene, size_t depth) {
-        auto refractedRay = refract({hit.intersectionPoint, hit.inwardDirection},
-                                    -hit.outwardNormal - hit.material.fuzz * math::randomOnUnitSphere(),
-                                    0.94,
-                                    1.0);
+        auto refractedRay = refract(
+            {hit.intersection, hit.inwardDirection}, -hit.outNormal - hit.material.fuzz * math::randomDirection(), 0.94, 1.0);
         if (refractedRay.direction == glm::vec3{0, 0, 0})
-            return Ray{hit.intersectionPoint + 0.001f * hit.inwardDirection, hit.inwardDirection}.sampleColour(scene, depth);
+            return Ray{hit.intersection + 0.001f * hit.inwardDirection, hit.inwardDirection}.sampleColour(scene, depth);
 
         const auto& sphere = scene.sphereByIdentifier(hit.identifier);
         const auto  d      = sphere.distance(refractedRay);
         if (d == 0 || d == std::numeric_limits<float>::max())
-            return Ray{hit.intersectionPoint + 0.001f * hit.inwardDirection, hit.inwardDirection}.sampleColour(scene, depth);
+            return Ray{hit.intersection + 0.001f * hit.inwardDirection, hit.inwardDirection}.sampleColour(scene, depth);
 
         refractedRay.start += d * refractedRay.direction;
         return refract(refractedRay, sphere.center - refractedRay.start, 1.0, 0.94).sampleColour(scene, depth - 1);

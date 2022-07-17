@@ -20,7 +20,7 @@ namespace trace::math {
         return {random_double(_min, _max), random_double(_min, _max), random_double(_min, _max)};
     }
 
-    glm::vec3 randomOnUnitSphere() {
+    glm::vec3 randomDirection() {
         // Rejection sampling of point on unit sphere: Sample until you get point IN the sphere, then normalize its length
         while (true) {
             auto p = randomVec3(-1, 1);

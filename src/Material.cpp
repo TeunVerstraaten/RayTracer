@@ -14,8 +14,8 @@ namespace trace {
                        float            _fuzz,
                        const glm::vec3& _ambientColor)
         : ambientFactor(_ambientFactor),
-          diffuseFactor(_diffuseFactor),
-          diffuseExponent(_diffuseExponent),
+          diffuse(_diffuseFactor),
+          diffuseExp(_diffuseExponent),
           reflectionCoefficient(_reflectionCoefficient),
           refractionCoefficient(_refractionCoefficient),
           fuzz(_fuzz),
